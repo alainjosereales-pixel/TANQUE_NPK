@@ -1,0 +1,2861 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>NPK Smart Soil</title>
+
+<style>
+
+/* ==========================================================
+   VARIABLES
+   ========================================================== */
+
+:root{
+
+    --bg:#171a16;
+    --card:#1f241d;
+    --card2:#242a20;
+    --edge:#333a2f;
+    --text:#eef0ea;
+    --muted:#8e9788;
+
+}
+
+
+/* ==========================================================
+   ESTILO GENERAL
+   ========================================================== */
+
+*{
+
+    box-sizing:border-box;
+
+}
+
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+
+body{
+
+    margin:0;
+
+    padding:30px 20px 50px;
+
+    color:var(--text);
+
+    font-family:
+        Segoe UI,
+        Arial,
+        sans-serif;
+
+    background-image:
+        url("/static/img/fondo-agro.jpg");
+
+    background-size:cover;
+
+    background-position:center;
+
+    background-attachment:fixed;
+
+    background-repeat:no-repeat;
+
+}
+
+
+/* ==========================================================
+   ELEMENTOS AGRÍCOLAS ANIMADOS
+   ========================================================== */
+
+
+
+
+
+.particula:nth-child(1){
+
+    left:10%;
+
+    top:-40px;
+
+    animation-duration:18s;
+
+}
+
+
+.particula:nth-child(2){
+
+    left:30%;
+
+    top:-80px;
+
+    animation-duration:24s;
+
+    animation-delay:5s;
+
+}
+
+
+.particula:nth-child(3){
+
+    left:55%;
+
+    top:-60px;
+
+    animation-duration:20s;
+
+    animation-delay:2s;
+
+}
+
+
+.particula:nth-child(4){
+
+    left:80%;
+
+    top:-100px;
+
+    animation-duration:26s;
+
+    animation-delay:7s;
+
+}
+
+
+/* ==========================================================
+   CONTENEDOR
+   ========================================================== */
+
+.contenedor{
+
+    max-width:1200px;
+
+    margin:auto;
+
+    position:relative;
+
+    z-index:1;
+
+}
+
+
+/* ==========================================================
+   TITULOS
+   ========================================================== */
+
+h1{
+
+    margin:0;
+
+    font-size:25px;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+}
+
+
+.subtitulo{
+
+    color:var(--muted);
+
+    margin-top:5px;
+
+    margin-bottom:25px;
+
+}
+
+
+.seccion{
+
+    margin-top:30px;
+
+}
+
+
+.seccion h2{
+
+    font-size:13px;
+
+    color:var(--muted);
+
+    text-transform:uppercase;
+
+    letter-spacing:.1em;
+
+    font-weight:500;
+
+    margin-bottom:15px;
+
+}
+
+
+/* ==========================================================
+   ESTADO ESP32
+   ========================================================== */
+
+.estado-esp32{
+
+    margin-top:10px;
+
+    padding:10px 14px;
+
+    border-radius:9px;
+
+    background:var(--card);
+
+    border:1px solid var(--edge);
+
+    color:var(--muted);
+
+    display:inline-block;
+
+}
+
+
+/* ==========================================================
+   GRAFICAS
+   ========================================================== */
+
+.graficas{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(320px,1fr)
+        );
+
+    gap:20px;
+
+    margin-top:20px;
+
+}
+
+
+.grafica{
+
+    background:var(--card);
+
+    border:1px solid var(--edge);
+
+    border-radius:16px;
+
+    padding:20px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0,0,0,.18);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+
+.grafica:hover{
+
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 14px 35px
+        rgba(0,0,0,.28);
+
+}
+
+
+.grafica h3{
+
+    margin:
+        0 0 8px;
+
+    font-size:15px;
+
+}
+
+
+.valor-grafica{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:var(--text);
+
+    margin-top:8px;
+
+    margin-bottom:6px;
+
+    letter-spacing:.02em;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+}
+
+
+.canvas-container{
+
+    position:relative;
+
+    height:280px;
+
+    margin-top:10px;
+
+}
+
+
+canvas{
+
+    display:block;
+
+    width:100%;
+
+    height:100%;
+
+}
+
+
+/* ==========================================================
+   TARJETAS DE SENSORES
+   ========================================================== */
+
+.tarjetas{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(150px,1fr)
+        );
+
+    gap:14px;
+
+}
+
+
+.tarjeta{
+
+    background:
+        linear-gradient(
+            160deg,
+            #242a20,
+            var(--card) 65%
+        );
+
+    border:1px solid var(--edge);
+
+    border-radius:12px;
+
+    padding:17px;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.tarjeta:hover{
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 10px 25px
+        rgba(0,0,0,.20);
+
+}
+
+
+.nombre{
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+
+.valor{
+
+    font-size:27px;
+
+    font-weight:700;
+
+    margin-top:6px;
+
+}
+
+
+.unidad{
+
+    font-size:12px;
+
+    color:var(--muted);
+
+    font-weight:400;
+
+}
+
+
+/* ==========================================================
+   CONTROL DEL MOTOR
+   ========================================================== */
+
+.controles{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    max-width:700px;
+
+}
+
+
+.boton{
+
+    flex:1;
+
+    min-width:180px;
+
+    border:none;
+
+    padding:18px 20px;
+
+    border-radius:12px;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+
+}
+
+
+.boton:hover{
+
+    filter:brightness(1.1);
+
+}
+
+
+.boton:active{
+
+    transform:
+        translateY(3px);
+
+}
+
+
+.boton-adelante{
+
+    background:#3c8a2e;
+
+}
+
+
+.boton-atras{
+
+    background:#3568a8;
+
+}
+
+
+.boton-detener{
+
+    background:#c92a2a;
+
+}
+
+
+.estado-motor{
+
+    margin-top:15px;
+
+    padding:12px 15px;
+
+    background:var(--card);
+
+    border:1px solid var(--edge);
+
+    border-radius:9px;
+
+    color:var(--muted);
+
+    max-width:700px;
+
+}
+
+
+/* ==========================================================
+   PANELES DESPLEGABLES
+   ========================================================== */
+
+.panel-registro{
+
+    background:var(--card);
+
+    border:1px solid var(--edge);
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+}
+
+
+.panel-registro summary{
+
+    padding:17px 20px;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    color:var(--text);
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    font-weight:600;
+
+    list-style:none;
+
+    user-select:none;
+
+}
+
+
+.panel-registro summary::-webkit-details-marker{
+
+    display:none;
+
+}
+
+
+.panel-registro summary::after{
+
+    content:"＋";
+
+    float:right;
+
+    font-size:20px;
+
+    color:var(--muted);
+
+}
+
+
+.panel-registro[open] summary::after{
+
+    content:"−";
+
+}
+
+
+.panel-registro .contenido-panel{
+
+    padding:
+        0 15px 15px;
+
+}
+
+
+/* ==========================================================
+   TABLAS
+   ========================================================== */
+
+.tabla-contenedor{
+
+    overflow-x:auto;
+
+    background:var(--card);
+
+    border:1px solid var(--edge);
+
+    border-radius:12px;
+
+}
+
+
+table{
+
+    width:100%;
+
+    min-width:950px;
+
+    border-collapse:collapse;
+
+}
+
+
+th{
+
+    padding:14px;
+
+    background:var(--card2);
+
+    color:var(--muted);
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+}
+
+
+td{
+
+    padding:13px;
+
+    text-align:center;
+
+    border-top:1px solid var(--edge);
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media(max-width:700px){
+
+    body{
+
+        padding:
+            20px 12px 40px;
+
+    }
+
+
+    .graficas{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .canvas-container{
+
+        height:250px;
+
+    }
+
+
+    .valor-grafica{
+
+        font-size:25px;
+
+    }
+
+}
+
+.escena-agricola{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:0;
+}
+
+.nube{
+    position:absolute;
+    width:260px;
+    height:75px;
+    background:rgba(255,255,255,0.18);
+    border-radius:50%;
+    filter:blur(18px);
+    opacity:0.7;
+}
+
+.nube::before,
+.nube::after{
+    content:"";
+    position:absolute;
+    background:inherit;
+    border-radius:50%;
+}
+
+.nube::before{
+    width:120px;
+    height:120px;
+    left:45px;
+    top:-45px;
+}
+
+.nube::after{
+    width:150px;
+    height:150px;
+    right:30px;
+    top:-65px;
+}
+
+.nube-1{
+    top:12%;
+    left:-300px;
+    animation:moverNube1 55s linear infinite;
+}
+
+.nube-2{
+    top:28%;
+    left:-350px;
+    transform:scale(.75);
+    opacity:.45;
+    animation:moverNube2 75s linear infinite;
+}
+
+.nube-3{
+    top:7%;
+    left:-250px;
+    transform:scale(.55);
+    opacity:.35;
+    animation:moverNube3 90s linear infinite;
+}
+
+@keyframes moverNube1{
+    from{
+        left:-300px;
+    }
+    to{
+        left:110%;
+    }
+}
+
+@keyframes moverNube2{
+    from{
+        left:-350px;
+    }
+    to{
+        left:110%;
+    }
+}
+
+@keyframes moverNube3{
+    from{
+        left:-250px;
+    }
+    to{
+        left:110%;
+    }
+}
+
+.encabezado-agro{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+    gap:20px;
+}
+
+.marca{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+.marca-icono{
+    width:70px;
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(20,35,25,.88);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+.marca-icono img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    padding:5px;
+}
+
+.encabezado-agro h1{
+    margin:0;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:2px;
+    color:#ffffff;
+}
+
+.encabezado-agro p{
+    margin:5px 0 0;
+    color:rgba(255,255,255,.72);
+    font-size:15px;
+    letter-spacing:.5px;
+}
+
+.estado-sistema{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:11px 16px;
+    border-radius:30px;
+    background:rgba(20,35,25,.82);
+    border:1px solid rgba(255,255,255,.12);
+    color:rgba(255,255,255,.78);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1px;
+}
+
+.indicador-estado{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#55c65a;
+    box-shadow:0 0 10px rgba(85,198,90,.8);
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     ELEMENTOS ANIMADOS
+     ====================================================== -->
+
+
+<div class="escena-agricola">
+    <div class="nube nube-1"></div>
+    <div class="nube nube-2"></div>
+    <div class="nube nube-3"></div>
+</div>
+
+<div class="contenedor">
+
+
+<!-- ======================================================
+     TITULO
+     ====================================================== -->
+
+<div class="encabezado-agro">
+    <div class="marca">
+        <span class="marca-icono">
+    <img src="/static/img/logo-npk.png" alt="NPK Smart Soil">
+</span>
+        <div>
+            <h1>NPK SMART SOIL</h1>
+            <p>Sistema inteligente de monitoreo agrícola</p>
+        </div>
+    </div>
+
+    <div class="estado-sistema">
+        <span class="indicador-estado"></span>
+        <span>MONITOREO EN TIEMPO REAL</span>
+    </div>
+</div>
+
+</div>
+
+
+<div id="estadoESP32"
+     class="estado-esp32">
+
+Buscando ESP32...
+
+</div>
+
+
+<!-- ======================================================
+     GRAFICAS
+     ====================================================== -->
+
+<div class="seccion">
+
+<h2>Gráficas</h2>
+
+
+<div class="graficas">
+
+
+<!-- ==================================================
+     HUMEDAD
+     ================================================== -->
+
+<div class="grafica">
+
+    <h3>Humedad</h3>
+
+    <div
+        class="valor-grafica"
+        id="valorGraficaHumedad">
+
+        -- %
+
+    </div>
+
+    <div class="canvas-container">
+
+        <canvas
+            id="graficaHumedad">
+        </canvas>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     TEMPERATURA
+     ================================================== -->
+
+<div class="grafica">
+
+    <h3>Temperatura</h3>
+
+    <div
+        class="valor-grafica"
+        id="valorGraficaTemperatura">
+
+        -- °C
+
+    </div>
+
+    <div class="canvas-container">
+
+        <canvas
+            id="graficaTemperatura">
+        </canvas>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     PH
+     ================================================== -->
+
+<div class="grafica">
+
+    <h3>pH</h3>
+
+    <div
+        class="valor-grafica"
+        id="valorGraficaPH">
+
+        --
+
+    </div>
+
+    <div class="canvas-container">
+
+        <canvas
+            id="graficaPH">
+        </canvas>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     CONDUCTIVIDAD
+     ================================================== -->
+
+<div class="grafica">
+
+    <h3>Conductividad</h3>
+
+    <div
+        class="valor-grafica"
+        id="valorGraficaConductividad">
+
+        -- µS/cm
+
+    </div>
+
+    <div class="canvas-container">
+
+        <canvas
+            id="graficaConductividad">
+        </canvas>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     NPK
+     ================================================== -->
+
+<div class="grafica">
+
+    <h3>NPK</h3>
+
+    <div
+        class="valor-grafica"
+        id="valorGraficaNPK">
+
+        --
+
+    </div>
+
+    <div class="canvas-container">
+
+        <canvas
+            id="graficaNPK">
+        </canvas>
+
+    </div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- ======================================================
+     ULTIMA MEDICION
+     ====================================================== -->
+
+<div class="seccion">
+
+<h2>Última medición</h2>
+
+
+<div class="tarjetas">
+
+
+<div class="tarjeta">
+
+<div class="nombre">
+Humedad
+</div>
+
+<div
+    id="humedad"
+    class="valor">
+
+0
+
+<span class="unidad">
+%
+</span>
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<div class="nombre">
+Temperatura
+</div>
+
+<div
+    id="temperatura"
+    class="valor">
+
+0
+
+<span class="unidad">
+°C
+</span>
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<div class="nombre">
+Conductividad
+</div>
+
+<div
+    id="conductividad"
+    class="valor">
+
+0
+
+<span class="unidad">
+µS/cm
+</span>
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<div class="nombre">
+pH
+</div>
+
+<div
+    id="ph"
+    class="valor">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<div class="nombre">
+Nitrógeno
+</div>
+
+<div
+    id="nitrogeno"
+    class="valor">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<div class="nombre">
+Fósforo
+</div>
+
+<div
+    id="fosforo"
+    class="valor">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<div class="nombre">
+Potasio
+</div>
+
+<div
+    id="potasio"
+    class="valor">
+
+0
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- ======================================================
+     CONTROL DEL MOTOR
+     ====================================================== -->
+
+<div class="seccion">
+
+<h2>Control de máquina</h2>
+
+
+<div class="controles">
+
+
+<button
+    class="boton boton-adelante"
+
+    onmousedown="
+        iniciarMovimiento('adelante')
+    "
+
+    onmouseup="
+        detenerMovimiento()
+    "
+
+    onmouseleave="
+        detenerMovimiento()
+    "
+
+    ontouchstart="
+        iniciarMovimiento('adelante');
+        event.preventDefault()
+    "
+
+    ontouchend="
+        detenerMovimiento()
+    ">
+
+ADELANTE
+
+</button>
+
+
+<button
+    class="boton"
+
+    onclick="
+        ejecutarSecuencia()
+    ">
+
+EJECUTAR SECUENCIA
+
+</button>
+
+
+<button
+    class="boton boton-atras"
+
+    onmousedown="
+        iniciarMovimiento('atras')
+    "
+
+    onmouseup="
+        detenerMovimiento()
+    "
+
+    onmouseleave="
+        detenerMovimiento()
+    "
+
+    ontouchstart="
+        iniciarMovimiento('atras');
+        event.preventDefault()
+    "
+
+    ontouchend="
+        detenerMovimiento()
+    ">
+
+ATRÁS
+
+</button>
+
+
+<button
+    class="boton boton-detener"
+
+    onclick="
+        detenerMovimiento()
+    ">
+
+DETENER
+
+</button>
+
+
+</div>
+
+
+<div
+    id="estadoMotor"
+    class="estado-motor">
+
+Motor detenido
+
+</div>
+
+</div>
+
+
+<!-- ======================================================
+     REGISTRO DE ACCIONES
+     ====================================================== -->
+
+<div class="seccion">
+
+<details class="panel-registro">
+
+
+<summary>
+
+Registro de acciones
+
+</summary>
+
+
+<div class="contenido-panel">
+
+
+<div class="tabla-contenedor">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Fecha / Hora</th>
+
+<th>Acción</th>
+
+<th>Resultado</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="tablaAcciones">
+
+<tr>
+
+<td colspan="4">
+
+Cargando acciones...
+
+</td>
+
+</tr>
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+</div>
+
+
+</details>
+
+</div>
+
+
+<!-- ======================================================
+     HISTORIAL DE MEDICIONES
+     ====================================================== -->
+
+<div class="seccion">
+
+<details class="panel-registro">
+
+
+<summary>
+
+Historial de mediciones
+
+</summary>
+
+
+<div class="contenido-panel">
+
+
+<div class="tabla-contenedor">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Fecha / Hora</th>
+
+<th>Humedad</th>
+
+<th>Temperatura</th>
+
+<th>Conductividad</th>
+
+<th>pH</th>
+
+<th>N</th>
+
+<th>P</th>
+
+<th>K</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{{ filas | safe }}
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+</div>
+
+
+</details>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+// ==========================================================
+// DATOS HISTORICOS
+// ==========================================================
+
+const fechas =
+    {{ fechas | tojson }};
+
+
+const humedadHistorica =
+    {{ humedad | tojson }};
+
+
+const temperaturaHistorica =
+    {{ temperatura | tojson }};
+
+
+const conductividadHistorica =
+    {{ conductividad | tojson }};
+
+
+const phHistorico =
+    {{ ph | tojson }};
+
+
+const nitrogenoHistorico =
+    {{ nitrogeno | tojson }};
+
+
+const fosforoHistorico =
+    {{ fosforo | tojson }};
+
+
+const potasioHistorico =
+    {{ potasio | tojson }};
+
+
+// ==========================================================
+// EJECUTAR SECUENCIA
+// ==========================================================
+
+async function ejecutarSecuencia(){
+
+    const estado =
+        document.getElementById(
+            "estadoMotor"
+        );
+
+
+    estado.innerText =
+        "Ejecutando secuencia automática...";
+
+
+    try{
+
+        const respuesta =
+            await fetch(
+                "/automatizar",
+                {
+                    method:"POST"
+                }
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if(datos.ok){
+
+            estado.innerText =
+                "✓ " +
+                datos.mensaje;
+
+        }else{
+
+            estado.innerText =
+                "Error: " +
+                datos.mensaje;
+
+        }
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        estado.innerText =
+            "No se pudo ejecutar la secuencia.";
+
+    }
+
+}
+
+
+// ==========================================================
+// CREAR GRAFICA
+// ==========================================================
+
+function crearGraficaLineal(
+    id,
+    etiquetas,
+    datasets
+){
+
+    const canvas =
+        document.getElementById(id);
+
+
+    if(!canvas){
+
+        return;
+
+    }
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    function dibujar(){
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+
+        const dpr =
+            window.devicePixelRatio || 1;
+
+
+        const ancho =
+            Math.max(
+                320,
+                rect.width
+            );
+
+
+        const alto =
+            Math.max(
+                220,
+                rect.height
+            );
+
+
+        canvas.width =
+            Math.round(
+                ancho * dpr
+            );
+
+
+        canvas.height =
+            Math.round(
+                alto * dpr
+            );
+
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+
+
+        ctx.clearRect(
+            0,
+            0,
+            ancho,
+            alto
+        );
+
+
+        // --------------------------------------------------
+        // MARGENES
+        // --------------------------------------------------
+
+        const izquierda = 55;
+
+        const derecha = 20;
+
+        const arriba = 20;
+
+        const abajo = 65;
+
+
+        const graficoAncho =
+            ancho -
+            izquierda -
+            derecha;
+
+
+        const graficoAlto =
+            alto -
+            arriba -
+            abajo;
+
+
+        // --------------------------------------------------
+        // BUSCAR VALORES
+        // --------------------------------------------------
+
+        const valores = [];
+
+
+        datasets.forEach(
+            function(dataset){
+
+                dataset.data.forEach(
+                    function(valor){
+
+                        const numero =
+                            Number(valor);
+
+
+                        if(
+                            Number.isFinite(
+                                numero
+                            )
+                        ){
+
+                            valores.push(
+                                numero
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+        // --------------------------------------------------
+        // SIN DATOS
+        // --------------------------------------------------
+
+        if(valores.length === 0){
+
+            ctx.fillStyle =
+                "#8e9788";
+
+
+            ctx.font =
+                "14px Segoe UI, Arial";
+
+
+            ctx.textAlign =
+                "center";
+
+
+            ctx.fillText(
+                "No hay datos suficientes",
+                ancho / 2,
+                alto / 2
+            );
+
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // ESCALA
+        // --------------------------------------------------
+
+        let minimo =
+            Math.min.apply(
+                null,
+                valores
+            );
+
+
+        let maximo =
+            Math.max.apply(
+                null,
+                valores
+            );
+
+
+        // Escalas específicas
+
+        if(id === "graficaHumedad"){
+
+            minimo = 0;
+
+            maximo = 100;
+
+        }
+
+
+        else if(
+            id === "graficaTemperatura"
+        ){
+
+            minimo = 0;
+
+            maximo = 50;
+
+        }
+
+
+        else if(
+            id === "graficaPH"
+        ){
+
+            minimo = 0;
+
+            maximo = 14;
+
+        }
+
+
+        else if(
+            id === "graficaConductividad"
+        ){
+
+            minimo = 0;
+
+        }
+
+
+        else if(
+            id === "graficaNPK"
+        ){
+
+            minimo = 0;
+
+        }
+
+
+        // --------------------------------------------------
+        // MARGEN PARA ESCALAS AUTOMATICAS
+        // --------------------------------------------------
+
+        if(
+            id !== "graficaHumedad" &&
+            id !== "graficaTemperatura" &&
+            id !== "graficaPH"
+        ){
+
+            if(minimo === maximo){
+
+                const margen =
+                    Math.abs(minimo) *
+                    0.1 ||
+                    1;
+
+
+                minimo -= margen;
+
+                maximo += margen;
+
+            }else{
+
+                const margen =
+                    (
+                        maximo -
+                        minimo
+                    ) *
+                    0.10;
+
+
+                minimo -= margen;
+
+                maximo += margen;
+
+            }
+
+        }
+
+
+        // --------------------------------------------------
+        // REJILLA
+        // --------------------------------------------------
+
+        ctx.strokeStyle =
+            "#333a2f";
+
+
+        ctx.lineWidth = 1;
+
+
+        ctx.font =
+            "12px Segoe UI, Arial";
+
+
+        ctx.fillStyle =
+            "#aeb7a9";
+
+
+        ctx.textAlign =
+            "right";
+
+
+        for(
+            let i = 0;
+            i <= 4;
+            i++
+        ){
+
+            const proporcion =
+                i / 4;
+
+
+            const y =
+                arriba +
+                graficoAlto *
+                proporcion;
+
+
+            const valor =
+                maximo -
+                (
+                    maximo -
+                    minimo
+                ) *
+                proporcion;
+
+
+            ctx.beginPath();
+
+
+            ctx.moveTo(
+                izquierda,
+                y
+            );
+
+
+            ctx.lineTo(
+                izquierda +
+                graficoAncho,
+                y
+            );
+
+
+            ctx.stroke();
+
+
+            ctx.fillText(
+                valor.toFixed(1),
+                izquierda - 8,
+                y + 4
+            );
+
+        }
+
+
+        // --------------------------------------------------
+        // ETIQUETAS EJE X
+        // --------------------------------------------------
+
+        ctx.textAlign =
+            "center";
+
+
+        ctx.fillStyle =
+            "#aeb7a9";
+
+
+        ctx.font =
+            "12px Segoe UI, Arial";
+
+
+        const cantidadEtiquetas =
+            etiquetas.length;
+
+
+        if(
+            cantidadEtiquetas > 0
+        ){
+
+            const maxEtiquetas = 6;
+
+
+            const paso =
+                Math.max(
+                    1,
+                    Math.ceil(
+                        cantidadEtiquetas /
+                        maxEtiquetas
+                    )
+                );
+
+
+            for(
+                let i = 0;
+                i < cantidadEtiquetas;
+                i += paso
+            ){
+
+                const x =
+                    cantidadEtiquetas === 1
+
+                    ?
+
+                    izquierda +
+                    graficoAncho / 2
+
+                    :
+
+                    izquierda +
+                    (
+                        i /
+                        (
+                            cantidadEtiquetas -
+                            1
+                        )
+                    ) *
+                    graficoAncho;
+
+
+                let texto =
+                    String(
+                        etiquetas[i]
+                    );
+
+
+                // Mostrar solo hora
+
+                if(
+                    texto.includes(" ")
+                ){
+
+                    texto =
+                        texto.split(" ")[1];
+
+                }
+
+
+                // Quitar segundos
+
+                if(
+                    texto.length >= 5
+                ){
+
+                    texto =
+                        texto.substring(
+                            0,
+                            5
+                        );
+
+                }
+
+
+                ctx.fillText(
+                    texto,
+                    x,
+                    arriba +
+                    graficoAlto +
+                    25
+                );
+
+            }
+
+        }
+
+
+        // --------------------------------------------------
+        // LINEAS
+        // --------------------------------------------------
+
+        datasets.forEach(
+            function(dataset){
+
+                const puntos = [];
+
+
+                const cantidadDatos =
+                    dataset.data.length;
+
+
+                for(
+                    let i = 0;
+                    i < cantidadDatos;
+                    i++
+                ){
+
+                    const numero =
+                        Number(
+                            dataset.data[i]
+                        );
+
+
+                    if(
+                        !Number.isFinite(
+                            numero
+                        )
+                    ){
+
+                        continue;
+
+                    }
+
+
+                    const x =
+                        cantidadDatos <= 1
+
+                        ?
+
+                        izquierda +
+                        graficoAncho / 2
+
+                        :
+
+                        izquierda +
+                        (
+                            i /
+                            (
+                                cantidadDatos -
+                                1
+                            )
+                        ) *
+                        graficoAncho;
+
+
+                    const y =
+                        arriba +
+                        (
+                            (
+                                maximo -
+                                numero
+                            ) /
+                            (
+                                maximo -
+                                minimo
+                            )
+                        ) *
+                        graficoAlto;
+
+
+                    puntos.push({
+                        x:x,
+                        y:y
+                    });
+
+                }
+
+
+                if(
+                    puntos.length === 0
+                ){
+
+                    return;
+
+                }
+
+
+                ctx.strokeStyle =
+                    dataset.color;
+
+
+                ctx.lineWidth =
+                    2.5;
+
+
+                ctx.lineJoin =
+                    "round";
+
+
+                ctx.lineCap =
+                    "round";
+
+
+                ctx.beginPath();
+
+
+                puntos.forEach(
+                    function(
+                        punto,
+                        i
+                    ){
+
+                        if(i === 0){
+
+                            ctx.moveTo(
+                                punto.x,
+                                punto.y
+                            );
+
+                        }else{
+
+                            ctx.lineTo(
+                                punto.x,
+                                punto.y
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                ctx.stroke();
+
+            }
+        );
+
+
+        // --------------------------------------------------
+        // LEYENDA
+        // --------------------------------------------------
+
+        let leyendaX =
+            izquierda;
+
+
+        const leyendaY =
+            alto - 20;
+
+
+        datasets.forEach(
+            function(dataset){
+
+                ctx.fillStyle =
+                    dataset.color;
+
+
+                ctx.fillRect(
+                    leyendaX,
+                    leyendaY,
+                    14,
+                    4
+                );
+
+
+                ctx.fillStyle =
+                    "#eef0ea";
+
+
+                ctx.textAlign =
+                    "left";
+
+
+                ctx.font =
+                    "11px Segoe UI, Arial";
+
+
+                ctx.fillText(
+                    dataset.label,
+                    leyendaX + 20,
+                    leyendaY + 5
+                );
+
+
+                leyendaX +=
+                    20 +
+                    ctx.measureText(
+                        dataset.label
+                    ).width +
+                    25;
+
+            }
+        );
+
+    }
+
+
+    // Dibujar inicialmente
+
+    dibujar();
+
+
+    // Redibujar al cambiar tamaño
+
+    window.addEventListener(
+        "resize",
+        dibujar
+    );
+
+}
+
+
+// ==========================================================
+// GRAFICA HUMEDAD
+// ==========================================================
+
+crearGraficaLineal(
+
+    "graficaHumedad",
+
+    fechas,
+
+    [
+
+        {
+
+            label:"Humedad (%)",
+
+            data:humedadHistorica,
+
+            color:"#5aa9e6"
+
+        }
+
+    ]
+
+);
+
+
+// ==========================================================
+// GRAFICA TEMPERATURA
+// ==========================================================
+
+crearGraficaLineal(
+
+    "graficaTemperatura",
+
+    fechas,
+
+    [
+
+        {
+
+            label:"Temperatura (°C)",
+
+            data:temperaturaHistorica,
+
+            color:"#f28e2b"
+
+        }
+
+    ]
+
+);
+
+
+// ==========================================================
+// GRAFICA PH
+// ==========================================================
+
+crearGraficaLineal(
+
+    "graficaPH",
+
+    fechas,
+
+    [
+
+        {
+
+            label:"pH",
+
+            data:phHistorico,
+
+            color:"#59a14f"
+
+        }
+
+    ]
+
+);
+
+
+// ==========================================================
+// GRAFICA CONDUCTIVIDAD
+// ==========================================================
+
+crearGraficaLineal(
+
+    "graficaConductividad",
+
+    fechas,
+
+    [
+
+        {
+
+            label:"Conductividad (µS/cm)",
+
+            data:conductividadHistorica,
+
+            color:"#b07aa1"
+
+        }
+
+    ]
+
+);
+
+
+// ==========================================================
+// GRAFICA NPK
+// ==========================================================
+
+crearGraficaLineal(
+
+    "graficaNPK",
+
+    fechas,
+
+    [
+
+        {
+
+            label:"Nitrógeno",
+
+            data:nitrogenoHistorico,
+
+            color:"#e15759"
+
+        },
+
+        {
+
+            label:"Fósforo",
+
+            data:fosforoHistorico,
+
+            color:"#76b7b2"
+
+        },
+
+        {
+
+            label:"Potasio",
+
+            data:potasioHistorico,
+
+            color:"#edc949"
+
+        }
+
+    ]
+
+);
+
+
+// ==========================================================
+// ACTUALIZAR DATOS DEL SENSOR
+// ==========================================================
+
+async function actualizarDatos(){
+
+    try{
+
+        const respuesta =
+            await fetch(
+                "/api/datos"
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        // --------------------------------------------------
+        // TARJETAS
+        // --------------------------------------------------
+
+        document.getElementById(
+            "humedad"
+        ).innerHTML =
+            datos.humedad +
+            '<span class="unidad">%</span>';
+
+
+        document.getElementById(
+            "temperatura"
+        ).innerHTML =
+            datos.temperatura +
+            '<span class="unidad">°C</span>';
+
+
+        document.getElementById(
+            "conductividad"
+        ).innerHTML =
+            datos.conductividad +
+            '<span class="unidad">µS/cm</span>';
+
+
+        document.getElementById(
+            "ph"
+        ).innerText =
+            datos.ph;
+
+
+        document.getElementById(
+            "nitrogeno"
+        ).innerText =
+            datos.nitrogeno;
+
+
+        document.getElementById(
+            "fosforo"
+        ).innerText =
+            datos.fosforo;
+
+
+        document.getElementById(
+            "potasio"
+        ).innerText =
+            datos.potasio;
+
+
+        // --------------------------------------------------
+        // VALORES GRANDES
+        // --------------------------------------------------
+
+        document.getElementById(
+            "valorGraficaHumedad"
+        ).innerText =
+            datos.humedad +
+            " %";
+
+
+        document.getElementById(
+            "valorGraficaTemperatura"
+        ).innerText =
+            datos.temperatura +
+            " °C";
+
+
+        document.getElementById(
+            "valorGraficaConductividad"
+        ).innerText =
+            datos.conductividad +
+            " µS/cm";
+
+
+        document.getElementById(
+            "valorGraficaPH"
+        ).innerText =
+            datos.ph;
+
+
+        document.getElementById(
+            "valorGraficaNPK"
+        ).innerText =
+            "N " +
+            datos.nitrogeno +
+            "  |  P " +
+            datos.fosforo +
+            "  |  K " +
+            datos.potasio;
+
+
+        // --------------------------------------------------
+        // ANIMACIÓN DE ACTUALIZACIÓN
+        // --------------------------------------------------
+
+        const valoresGraficas = [
+
+            "valorGraficaHumedad",
+
+            "valorGraficaTemperatura",
+
+            "valorGraficaConductividad",
+
+            "valorGraficaPH",
+
+            "valorGraficaNPK"
+
+        ];
+
+
+        valoresGraficas.forEach(
+            function(id){
+
+                const elemento =
+                    document.getElementById(id);
+
+
+                if(elemento){
+
+                    elemento.style.transform =
+                        "scale(1.04)";
+
+
+                    elemento.style.opacity =
+                        "0.65";
+
+
+                    setTimeout(
+                        function(){
+
+                            elemento.style.transform =
+                                "scale(1)";
+
+
+                            elemento.style.opacity =
+                                "1";
+
+                        },
+                        180
+                    );
+
+                }
+
+            }
+        );
+
+
+        // --------------------------------------------------
+        // ESTADO ESP32
+        // --------------------------------------------------
+
+        const estado =
+            document.getElementById(
+                "estadoESP32"
+            );
+
+
+        if(
+            datos.esp32_conectado
+        ){
+
+            estado.innerText =
+                "ESP32 conectado - " +
+                datos.puerto;
+
+        }else{
+
+            estado.innerText =
+                "ESP32 no conectado";
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Error obteniendo datos:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// CONTROL DEL MOTOR
+// ==========================================================
+
+async function iniciarMovimiento(
+    accion
+){
+
+    const estado =
+        document.getElementById(
+            "estadoMotor"
+        );
+
+
+    estado.innerText =
+        "Enviando comando: " +
+        accion.toUpperCase();
+
+
+    try{
+
+        const respuesta =
+            await fetch(
+                "/motor/" + accion
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if(datos.ok){
+
+            estado.innerText =
+                "MOTOR: " +
+                accion.toUpperCase();
+
+        }else{
+
+            estado.innerText =
+                "Error: " +
+                datos.mensaje;
+
+        }
+
+
+    }catch(error){
+
+        estado.innerText =
+            "No se pudo conectar con Flask";
+
+
+        console.error(error);
+
+    }
+
+}
+
+
+async function detenerMovimiento(){
+
+    const estado =
+        document.getElementById(
+            "estadoMotor"
+        );
+
+
+    try{
+
+        const respuesta =
+            await fetch(
+                "/motor/detener"
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if(datos.ok){
+
+            estado.innerText =
+                "MOTOR: DETENIDO";
+
+        }else{
+
+            estado.innerText =
+                "Error al detener";
+
+        }
+
+
+    }catch(error){
+
+        estado.innerText =
+            "No se pudo detener el motor";
+
+
+        console.error(error);
+
+    }
+
+}
+
+
+// ==========================================================
+// REGISTRO DE ACCIONES
+// ==========================================================
+
+async function actualizarAcciones(){
+
+    try{
+
+        const respuesta =
+            await fetch(
+                "/api/acciones"
+            );
+
+
+        if(!respuesta.ok){
+
+            throw new Error(
+                "El servidor respondió HTTP " +
+                respuesta.status
+            );
+
+        }
+
+
+        const acciones =
+            await respuesta.json();
+
+
+        const tabla =
+            document.getElementById(
+                "tablaAcciones"
+            );
+
+
+        tabla.innerHTML = "";
+
+
+        if(
+            acciones.length === 0
+        ){
+
+            tabla.innerHTML = `
+
+                <tr>
+
+                    <td colspan="4">
+
+                        No hay acciones registradas.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            return;
+
+        }
+
+
+        acciones.forEach(
+            accion => {
+
+                let icono = "⚙️";
+
+
+                if(
+                    accion.accion ===
+                    "ADELANTE"
+                ){
+
+                    icono = "↑";
+
+                }
+
+
+                if(
+                    accion.accion ===
+                    "ATRAS"
+                ){
+
+                    icono = "↓";
+
+                }
+
+
+                if(
+                    accion.accion ===
+                    "DETENER"
+                ){
+
+                    icono = "⏹";
+
+                }
+
+
+                tabla.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            ${accion.id}
+                        </td>
+
+                        <td>
+                            ${accion.fecha_hora}
+                        </td>
+
+                        <td>
+                            ${icono}
+                            ${accion.accion}
+                        </td>
+
+                        <td>
+                            ✓ ${accion.resultado}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Error obteniendo acciones:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// ACTUALIZACION AUTOMATICA
+// ==========================================================
+
+actualizarDatos();
+
+
+setInterval(
+    actualizarDatos,
+    1000
+);
+
+
+actualizarAcciones();
+
+
+setInterval(
+    actualizarAcciones,
+    1000
+);
+
+
+</script>
+
+
+</body>
+
+</html>
